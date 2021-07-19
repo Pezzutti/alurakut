@@ -23,14 +23,36 @@ function ProfileSidebar(propriedades) {
   )
 }
 
+function ProfileRelationsBox(props){
+  return (
+    <ProfileRelationsBoxWrapper>
+        <h2 className="smallTitle">
+            {props.title} ({props.items.length})
+        </h2>
+         </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const githubUser = "pezzutti";
   const favoritePeople = ['juunegreiros','omariosouto','peas','rafaballerini','marcobrunodev','felipefialho'];
+
   const [communities, setCommunities] = React.useState([{
     id: '666',
     title: 'Linkin Park', 
     image: 'https://scontent.fcpq3-1.fna.fbcdn.net/v/t1.6435-9/74524015_1203061413227846_2675564737630044160_n.jpg?_nc_cat=100&ccb=1-3&_nc_sid=09cbfe&_nc_ohc=CMQ9NSQteNwAX-LF3mU&_nc_ht=scontent.fcpq3-1.fna&oh=35efb4a7c890e06f9dd973a33f5fd6b1&oe=60FAAA0B'
   }]);
+  
+  const [followers, setFollowers] = React.useState([]);
+  React.useEffect(function() {
+    fetch('https://api.github.com/users/pezzutti/followers')
+    .then(function (serverReturn){
+      return serverReturn.json();
+    })
+    .then(function (convertedReturn){
+      setFollowers(convertedReturn);
+    })
+  }, [])
 
   return (
     <>
@@ -85,42 +107,43 @@ export default function Home() {
           </Box>
         </div>
         <div className="profileRelationsArea" style={{gridArea: 'profileRelationsArea'}}>
-        <ProfileRelationsBoxWrapper>
-        <h2 className="smallTitle">
-            Comunidades ({communities.length})
-        </h2>
+          <ProfileRelationsBox title="Seguidores" items={followers}/>
+          <ProfileRelationsBoxWrapper>
+          <h2 className="smallTitle">
+              Comunidades ({communities.length})
+          </h2>
 
-            <ul>
-              {communities.map((itemAtual) => {
-                return (
-                  <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`} >
-                      <img src={itemAtual.image}/>
-                      <span>{itemAtual.title}</span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-         </ProfileRelationsBoxWrapper>
-         <ProfileRelationsBoxWrapper>
-           <h2 className="smallTitle">
-            Pessoas da Comunidade ({favoritePeople.length})
-           </h2>
+              <ul>
+                {communities.map((itemAtual) => {
+                  return (
+                    <li key={itemAtual.id}>
+                      <a href={`/users/${itemAtual.title}`} >
+                        <img src={itemAtual.image}/>
+                        <span>{itemAtual.title}</span>
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Pessoas da Comunidade ({favoritePeople.length})
+            </h2>
 
-            <ul>
-              {favoritePeople.map((itemAtual) => {
-                return (
-                  <li key={itemAtual}>
-                    <a href={`/users/${itemAtual}`} key={itemAtual}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-         </ProfileRelationsBoxWrapper>
+              <ul>
+                {favoritePeople.map((itemAtual) => {
+                  return (
+                    <li key={itemAtual}>
+                      <a href={`/users/${itemAtual}`} key={itemAtual}>
+                        <img src={`https://github.com/${itemAtual}.png`} />
+                        <span>{itemAtual}</span>
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+          </ProfileRelationsBoxWrapper>
         </div>
      </MainGrid>
     </>
